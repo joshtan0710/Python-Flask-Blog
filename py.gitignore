@@ -10,3 +10,5 @@ venv.bak/
 # Distribution / packaging
 .venv/*
 .vscode
+
+about.html
