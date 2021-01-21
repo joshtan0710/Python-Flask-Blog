@@ -8,7 +8,7 @@ env.bak/
 venv.bak/
 
 # Distribution / packaging
-.venv/*
+venv/*
 .vscode
 
 about.html
