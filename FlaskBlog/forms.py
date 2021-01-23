@@ -9,7 +9,7 @@ class Registration(FlaskForm):
     email = StringField('Email', validators=[DataRequired(), Email() ])
 
     password = PasswordField('Password', validators = [DataRequired()])
-    confirm_password = PasswordField('Confirm Password', validators = [DataRequired(), EqualTo('Password')])  #want to make sure passwords are equals 
+    confirm_password = PasswordField('Confirm Password', validators = [DataRequired(), EqualTo('password')])  #want to make sure passwords are equals 
 
     submit = SubmitField('Sign Up')
 
