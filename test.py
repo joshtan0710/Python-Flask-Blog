@@ -68,3 +68,76 @@ def parse_args():
     args = parser.parse_args()
     return args
 
+
+def main(args):
+    os.makedirs("cache", exist_ok=True)
+    os.makedirs("outputs", exist_ok=True)
+
+    dir_path = args.dir_path
+    output_blob_path = args.output_blob_path
+    pre_train_weights_path = os.path.join(dir_path,"models","noisy.student.notop-b0.h5")
+
+    print(f"Is pre_train_weights_path valid? : {os.path.exists(pre_train_weights_path)}")
+    print(f"Pre_train_weights_path: {pre_train_weights_path}")
+    
+    print("dir_path", "=" * 50)
+    print(dir_path)
+    print("output_blob_path", "=" * 50)
+    print(output_blob_path)
+    
+    # provide path to csvs for training 
+    csvDir = os.path.join(dir_path, "binary_rop_classifier", "csvs")
+    train_df = pd.read_csv(os.path.join(csvDir, train_csv_path))
+    val_df = pd.read_csv(os.path.join(csvDir, val_csv_path))
+    train_df = train_df[train_df["isExist"] == True]
+    val_df = val_df[val_df["isExist"] == True]
+    
+    train_df[srcPathCol] = train_df[srcPathCol].apply(lambda x: os.path.join(dir_path, x))
+    val_df[srcPathCol] = val_df[srcPathCol].apply(lambda x: os.path.join(dir_path, x))
+    
+
+    # Assigning labels
+    train_df['hasROP'].loc[train_df['hasROP'] == True] = pos_label   #"Have ROP"
+    train_df['hasROP'].loc[train_df['hasROP'] == False] = neg_label  #"No ROP"
+    val_df['hasROP'].loc[val_df['hasROP'] == True] = pos_label       #"Have ROP" 
+    val_df['hasROP'].loc[val_df['hasROP'] == False] = neg_label      #"No ROP"
+
+    # sanity check if path is valid
+    print("train_df: ")
+    for idx,row in train_df.iterrows():
+        if idx >= 10:
+            break
+        print(row[srcPathCol])
+        print(os.path.exists(row[srcPathCol]))
+    
+
+    # Using ImagedataGenerators to form batches
+    train_datagen = ImageDataGenerator(
+        preprocessing_function=train_utils.preprocess_augment_fn   
+    )
+
+    val_datagen = ImageDataGenerator(
+        preprocessing_function=train_utils.preprocess_fn
+    )
+
+    train_gen = train_datagen.flow_from_dataframe(
+        train_df,
+        x_col=srcPathCol,
+        y_col=targetCol,
+        target_size=INPUT_SHAPE[:2],
+        batch_size=BATCH_SIZE,
+        class_mode='binary',
+        shuffle=True,
+        validate_filenames=False
+    )
+
+    val_gen = val_datagen.flow_from_dataframe(
+        val_df,
+        x_col=srcPathCol,
+        y_col=targetCol,
+        target_size=INPUT_SHAPE[:2],
+        batch_size=BATCH_SIZE,
+        class_mode='binary',
+        shuffle=True,
+        validate_filenames=False
+    )
