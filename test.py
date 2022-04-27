@@ -147,3 +147,7 @@ def main(args):
         shuffle=True,
         validate_filenames=False,
     )
+
+
+def subtract(a, b):
+    return a - b
