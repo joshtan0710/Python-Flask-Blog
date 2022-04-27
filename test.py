@@ -131,7 +131,7 @@ def main(args):
         validate_filenames=False
     )
 
-    val_gen = val_datagen.flow_from_dataframe(
+    test_gen = val_datagen.flow_from_dataframe(
         val_df,
         x_col=srcPathCol,
         y_col=targetCol,
@@ -142,4 +142,13 @@ def main(args):
         validate_filenames=False
     )
     
-print('Hola amigos')
+print('hola amiguss')
+print('pull pull pull request baby')
+print('damn')
+
+
+def subtract(a,b):
+    print('hello world ')
+    print('hello world 2.0')
+    print('hello world 3.0')
+    return a-b 
