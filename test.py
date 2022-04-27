@@ -140,6 +140,7 @@ def main(args):
         class_mode='binary',
         shuffle=True,
         validate_filenames=False
+<<<<<<< HEAD
     )
     
 print('hola amiguss')
@@ -152,3 +153,6 @@ def subtract(a,b):
     print('hello world 2.0')
     print('hello world 3.0')
     return a-b 
+=======
+    )
+>>>>>>> parent of 0174f68 (Update test.py)
