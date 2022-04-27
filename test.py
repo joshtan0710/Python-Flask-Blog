@@ -77,4 +77,5 @@ def main(args):
 
 
 def subtract(a, b):
-    return (a - b) * 10
+
+    return ((a - b) * 10) + 5
