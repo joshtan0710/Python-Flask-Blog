@@ -131,7 +131,7 @@ def main(args):
         validate_filenames=False
     )
 
-    val_gen = val_datagen.flow_from_dataframe(
+    test_gen = val_datagen.flow_from_dataframe(
         val_df,
         x_col=srcPathCol,
         y_col=targetCol,
