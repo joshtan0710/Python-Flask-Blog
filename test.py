@@ -1,22 +1,9 @@
 import os
-import tensorflow.keras.backend as K
 import argparse
 
-import pandas as pd
-import numpy as np
-from azureml.core import Run
-import train_utils
-import utils
-import compile_model as cm
-import time
-from sklearn.utils import class_weight as cw
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-
-run = Run.get_context()
 
 # Define source model name if fine tuning a model
 SRC_MODEL_NAME = "retcam_stage1"
-DEST_MODEL_NAME = f"retcam_neo_2022_eff0---{utils.getStandardTime()}"
 
 FIRST_EPOCHS = 1
 SECOND_EPOCHS = 10
@@ -53,12 +40,7 @@ targetCol = "hasROP"
 
 
 def get_class_weight(labels):
-    class_weight_arr = cw.compute_class_weight(
-        "balanced", classes=np.unique(labels), y=labels
-    )
     class_weights = {}
-    for i in range(len(class_weight_arr)):
-        class_weights[i] = class_weight_arr[i]
     return class_weights
 
 
@@ -93,61 +75,6 @@ def main(args):
     print("output_blob_path", "=" * 50)
     print(output_blob_path)
 
-    # provide path to csvs for training
-    csvDir = os.path.join(dir_path, "binary_rop_classifier", "csvs")
-    train_df = pd.read_csv(os.path.join(csvDir, train_csv_path))
-    val_df = pd.read_csv(os.path.join(csvDir, val_csv_path))
-    train_df = train_df[train_df["isExist"] == True]
-    val_df = val_df[val_df["isExist"] == True]
-
-    train_df[srcPathCol] = train_df[srcPathCol].apply(
-        lambda x: os.path.join(dir_path, x)
-    )
-    val_df[srcPathCol] = val_df[srcPathCol].apply(lambda x: os.path.join(dir_path, x))
-
-    # Assigning labels
-    train_df["hasROP"].loc[train_df["hasROP"] == True] = pos_label  # "Have ROP"
-    train_df["hasROP"].loc[train_df["hasROP"] == False] = neg_label  # "No ROP"
-    val_df["hasROP"].loc[val_df["hasROP"] == True] = pos_label  # "Have ROP"
-    val_df["hasROP"].loc[val_df["hasROP"] == False] = neg_label  # "No ROP"
-
-    # sanity check if path is valid
-    print("train_df: ")
-    for idx, row in train_df.iterrows():
-        if idx >= 10:
-            break
-        print(row[srcPathCol])
-        print(os.path.exists(row[srcPathCol]))
-
-    # Using ImagedataGenerators to form batches
-    train_datagen = ImageDataGenerator(
-        preprocessing_function=train_utils.preprocess_augment_fn
-    )
-
-    val_datagen = ImageDataGenerator(preprocessing_function=train_utils.preprocess_fn)
-
-    train_gen = train_datagen.flow_from_dataframe(
-        train_df,
-        x_col=srcPathCol,
-        y_col=targetCol,
-        target_size=INPUT_SHAPE[:2],
-        batch_size=BATCH_SIZE,
-        class_mode="binary",
-        shuffle=True,
-        validate_filenames=False,
-    )
-
-    test_gen = val_datagen.flow_from_dataframe(
-        val_df,
-        x_col=srcPathCol,
-        y_col=targetCol,
-        target_size=INPUT_SHAPE[:2],
-        batch_size=BATCH_SIZE,
-        class_mode="binary",
-        shuffle=True,
-        validate_filenames=False,
-    )
-
 
 def subtract(a, b):
-    return a - b
+    return (a - b) * 10
