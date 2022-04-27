@@ -145,3 +145,8 @@ def main(args):
 print('hola amiguss')
 print('pull pull pull request baby')
 print('damn')
+
+
+def subtract(a,b):
+     
+    return a-b 
