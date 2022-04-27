@@ -148,6 +148,12 @@ print('damn')
 
 
 def subtract(a,b):
+<<<<<<< HEAD
 
     print('hello world')
+=======
+    
+    
+    print('hello world ')
+>>>>>>> parent of 8374f73 (removed print statement)
     return a-b 
