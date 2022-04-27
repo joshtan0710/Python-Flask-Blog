@@ -142,4 +142,4 @@ def main(args):
         validate_filenames=False
     )
     
-print('Hoa amigos')
+print('mr poopy pants')
