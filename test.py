@@ -143,6 +143,5 @@ def main(args):
     )
     
 print('hola amiguss')
-print('pull pull pull request baby')
-print('damn')
+print('pull pull request')
 
